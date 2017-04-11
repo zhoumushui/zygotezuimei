@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="rhythm_icon_margin">2.0dip</dimen>
+    <dimen name="rhythm_layout_height">60.0dip</dimen>
+    <dimen name="rhythm_item_height">100.0dip</dimen>
+    <dimen name="rhythm_edge_size_for_shift">50.0dip</dimen>
+</resources>
