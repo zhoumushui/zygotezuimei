@@ -26,22 +26,22 @@ public class RhythmAdapter extends BaseAdapter {
     /**
      * 数据源
      */
-    private List<Card> mCardList;
+    private List<Card> listCard;
 
-    public RhythmAdapter(Context context, List<Card> cardList) {
+    public RhythmAdapter(Context context, List<Card> listCard) {
         this.mContext = context;
-        this.mCardList = new ArrayList();
-        this.mCardList.addAll(cardList);
+        this.listCard = new ArrayList();
+        this.listCard.addAll(listCard);
         if (context != null)
             this.mInflater = LayoutInflater.from(context);
     }
 
     public int getCount() {
-        return this.mCardList.size();
+        return this.listCard.size();
     }
 
     public Object getItem(int position) {
-        return this.mCardList.get(position);
+        return this.listCard.get(position);
     }
 
     @Override
@@ -61,17 +61,23 @@ public class RhythmAdapter extends BaseAdapter {
         RelativeLayout relativeLayout = (RelativeLayout) this.mInflater.
                 inflate(R.layout.adapter_rhythm_icon, null);
         //设置item布局的大小以及Y轴的位置
-        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams((int) itemWidth, mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_item_height)));
+        relativeLayout.setLayoutParams(new RelativeLayout.LayoutParams((int) itemWidth,
+                mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_item_height)));
         relativeLayout.setTranslationY(itemWidth);
 
         //设置第二层RelativeLayout布局的宽和高
         RelativeLayout childRelativeLayout = (RelativeLayout) relativeLayout.getChildAt(0);
-        int relativeLayoutWidth = (int) itemWidth - 2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin);
-        childRelativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(relativeLayoutWidth, mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_item_height) - 2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin)));
+        int relativeLayoutWidth = (int) itemWidth -
+                2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin);
+        childRelativeLayout.setLayoutParams(new RelativeLayout.LayoutParams(relativeLayoutWidth,
+                mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_item_height) -
+                        2 * mContext.getResources().
+                                getDimensionPixelSize(R.dimen.rhythm_icon_margin)));
 
         ImageView imageIcon = (ImageView) relativeLayout.findViewById(R.id.image_icon);
         //计算ImageView的大小
-        int iconSize = (relativeLayoutWidth - 2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin));
+        int iconSize = (relativeLayoutWidth -
+                2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin));
         ViewGroup.LayoutParams iconParams = imageIcon.getLayoutParams();
         iconParams.width = iconSize;
         iconParams.height = iconSize;

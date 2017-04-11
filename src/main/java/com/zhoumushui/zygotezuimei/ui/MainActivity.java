@@ -29,12 +29,12 @@ public class MainActivity extends FragmentActivity {
     /**
      * 钢琴布局
      */
-    private RhythmLayout mRhythmLayout;
+    private RhythmLayout rhythmLayout;
 
     /**
      * 钢琴布局的适配器
      */
-    private RhythmAdapter mRhythmAdapter;
+    private RhythmAdapter rhythmAdapter;
 
     /**
      * 接收PullToRefreshViewPager中的ViewPager控件
@@ -44,17 +44,17 @@ public class MainActivity extends FragmentActivity {
     /**
      * 可以侧拉刷新的ViewPager，其实是一个LinearLayout控件
      */
-    private PullToRefreshViewPager mPullToRefreshViewPager;
+    private PullToRefreshViewPager pullToRefreshViewPager;
 
     /**
      * ViewPager的适配器
      */
-    private CardPagerAdapter mPagerAdapter;
+    private CardPagerAdapter cardPagerAdapter;
 
     /**
      * 最外层的View，为了设置背景颜色而使用
      */
-    private View mMainView;
+    private View layoutMain;
 
     private List<Card> mCardList;
 
@@ -75,76 +75,79 @@ public class MainActivity extends FragmentActivity {
         }
     };
 
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    private ViewPager.OnPageChangeListener onPageChangeListener =
+            new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset,
+                                           int positionOffsetPixels) {
 
-        }
+                }
 
-        @Override
-        public void onPageSelected(int position) {
-            int currColor = mCardList.get(position).getBackgroundColor();
-            AnimatorUtils.showBackgroundColorAnimation(mMainView, mPreColor, currColor, 400);
-            mPreColor = currColor;
+                @Override
+                public void onPageSelected(int position) {
+                    int currColor = mCardList.get(position).getBackgroundColor();
+                    AnimatorUtils.showBackgroundColorAnimation(layoutMain, mPreColor, currColor,
+                            400);
+                    mPreColor = currColor;
 
-            mMainView.setBackgroundColor(mCardList.get(position).getBackgroundColor());
-            mRhythmLayout.showRhythmAtPosition(position);
-        }
+                    layoutMain.setBackgroundColor(mCardList.get(position).getBackgroundColor());
+                    rhythmLayout.showRhythmAtPosition(position);
+                }
 
-        @Override
-        public void onPageScrollStateChanged(int state) {
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-        }
-    };
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+        initial();
     }
 
-    private void init() {
+    private void initial() {
         //实例化控件
-        mMainView = findViewById(R.id.main_view);
-        mRhythmLayout = (RhythmLayout) findViewById(R.id.box_rhythm);
-        mPullToRefreshViewPager = (PullToRefreshViewPager) findViewById(R.id.pager);
+        layoutMain = findViewById(R.id.layoutMain);
+        rhythmLayout = (RhythmLayout) findViewById(R.id.rhythmLayout);
+        pullToRefreshViewPager = (PullToRefreshViewPager) findViewById(R.id.pullToRefreshViewPager);
         //获取PullToRefreshViewPager中的ViewPager控件
-        mViewPager = mPullToRefreshViewPager.getRefreshableView();
+        mViewPager = pullToRefreshViewPager.getRefreshableView();
         //设置钢琴布局的高度 高度为钢琴布局item的宽度+10dp
-        int height = (int) mRhythmLayout.getRhythmItemWidth() + (int) TypedValue.applyDimension(
+        int height = (int) rhythmLayout.getRhythmItemWidth() + (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 10.0F, getResources().getDisplayMetrics());
-        mRhythmLayout.getLayoutParams().height = height;
+        rhythmLayout.getLayoutParams().height = height;
 
-        ((RelativeLayout.LayoutParams) this.mPullToRefreshViewPager.getLayoutParams()).bottomMargin = height;
+        ((RelativeLayout.LayoutParams) this.pullToRefreshViewPager.getLayoutParams()).bottomMargin
+                = height;
 
         mCardList = new ArrayList<Card>();
         for (int i = 0; i < 30; i++) {
             Card card = new Card();
-            //随机生成颜色值
-            card.setBackgroundColor((int) -(Math.random() * (16777216 - 1) + 1));
+            card.setBackgroundColor((int) -(Math.random() * (16777216 - 1) + 1)); // 随机生成颜色值
             mCardList.add(card);
         }
         //设置ViewPager的适配器
-        mPagerAdapter = new CardPagerAdapter(getSupportFragmentManager(), mCardList);
-        mViewPager.setAdapter(mPagerAdapter);
+        cardPagerAdapter = new CardPagerAdapter(getSupportFragmentManager(), mCardList);
+        mViewPager.setAdapter(cardPagerAdapter);
         //设置钢琴布局的适配器
-        mRhythmAdapter = new RhythmAdapter(this, mCardList);
-        mRhythmLayout.setAdapter(mRhythmAdapter);
+        rhythmAdapter = new RhythmAdapter(this, mCardList);
+        rhythmLayout.setAdapter(rhythmAdapter);
 
         //设置ViewPager的滚动速度
         setViewPagerScrollSpeed(this.mViewPager, 400);
 
         //设置控件的监听
-        mRhythmLayout.setRhythmListener(iRhythmItemListener);
+        rhythmLayout.setRhythmListener(iRhythmItemListener);
         mViewPager.setOnPageChangeListener(onPageChangeListener);
         //设置ScrollView滚动动画延迟执行的时间
-        mRhythmLayout.setScrollRhythmStartDelayTime(400);
+        rhythmLayout.setScrollRhythmStartDelayTime(400);
 
         //初始化时将第一个键帽弹出,并设置背景颜色
-        mRhythmLayout.showRhythmAtPosition(0);
+        rhythmLayout.showRhythmAtPosition(0);
         mPreColor = mCardList.get(0).getBackgroundColor();
-        mMainView.setBackgroundColor(mPreColor);
+        layoutMain.setBackgroundColor(mPreColor);
     }
 
     /**
@@ -157,7 +160,8 @@ public class MainActivity extends FragmentActivity {
         try {
             Field field = ViewPager.class.getDeclaredField("mScroller");
             field.setAccessible(true);
-            ViewPagerScroller viewPagerScroller = new ViewPagerScroller(viewPager.getContext(), new OvershootInterpolator(0.6F));
+            ViewPagerScroller viewPagerScroller = new ViewPagerScroller(viewPager.getContext(),
+                    new OvershootInterpolator(0.6F));
             field.set(viewPager, viewPagerScroller);
             viewPagerScroller.setDuration(speed);
         } catch (NoSuchFieldException e) {

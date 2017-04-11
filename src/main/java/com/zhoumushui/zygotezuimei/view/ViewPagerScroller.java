@@ -19,11 +19,9 @@ public class ViewPagerScroller extends Scroller {
         super(context, interpolator, flywheel);
     }
 
-
     public void setDuration(int duration) {
         this.mDuration = duration;
     }
-
 
     public void startScroll(int startX, int startY, int dx, int dy) {
         super.startScroll(startX, startY, dx, dy, this.mDuration);

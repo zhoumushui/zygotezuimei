@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ptr="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_view"
+    android:id="@+id/layoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00aac6">
@@ -16,7 +16,7 @@
        ptr:ptrScrollingWhileRefreshingEnabled="false"-->
 
     <com.handmark.pulltorefresh.library.extras.viewpager.PullToRefreshViewPager
-        android:id="@+id/pager"
+        android:id="@+id/pullToRefreshViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50.0dip"
@@ -26,7 +26,7 @@
         ptr:ptrScrollingWhileRefreshingEnabled="false" />
 
     <com.zhoumushui.zygotezuimei.control.RhythmLayout
-        android:id="@+id/box_rhythm"
+        android:id="@+id/rhythmLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/rhythm_layout_height"
         android:layout_alignParentBottom="true"

@@ -66,7 +66,8 @@ public class RoundedImageView extends ImageView {
     public RoundedImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RoundedImageView, defStyle, 0);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RoundedImageView,
+                defStyle, 0);
 
         int index = a.getInt(R.styleable.RoundedImageView_android_scaleType, -1);
         if (index >= 0) {
@@ -95,18 +96,21 @@ public class RoundedImageView extends ImageView {
         mutateBackground = a.getBoolean(R.styleable.RoundedImageView_riv_mutate_background, false);
         isOval = a.getBoolean(R.styleable.RoundedImageView_riv_oval, false);
 
-        final int tileMode = a.getInt(R.styleable.RoundedImageView_riv_tile_mode, TILE_MODE_UNDEFINED);
+        final int tileMode = a.getInt(R.styleable.RoundedImageView_riv_tile_mode,
+                TILE_MODE_UNDEFINED);
         if (tileMode != TILE_MODE_UNDEFINED) {
             setTileModeX(parseTileMode(tileMode));
             setTileModeY(parseTileMode(tileMode));
         }
 
-        final int tileModeX = a.getInt(R.styleable.RoundedImageView_riv_tile_mode_x, TILE_MODE_UNDEFINED);
+        final int tileModeX = a.getInt(R.styleable.RoundedImageView_riv_tile_mode_x,
+                TILE_MODE_UNDEFINED);
         if (tileModeX != TILE_MODE_UNDEFINED) {
             setTileModeX(parseTileMode(tileModeX));
         }
 
-        final int tileModeY = a.getInt(R.styleable.RoundedImageView_riv_tile_mode_y, TILE_MODE_UNDEFINED);
+        final int tileModeY = a.getInt(R.styleable.RoundedImageView_riv_tile_mode_y,
+                TILE_MODE_UNDEFINED);
         if (tileModeY != TILE_MODE_UNDEFINED) {
             setTileModeY(parseTileMode(tileModeY));
         }
@@ -337,8 +341,8 @@ public class RoundedImageView extends ImageView {
             return;
         }
 
-        borderColor =
-                (colors != null) ? colors : ColorStateList.valueOf(RoundedDrawable.DEFAULT_BORDER_COLOR);
+        borderColor = (colors != null) ? colors :
+                ColorStateList.valueOf(RoundedDrawable.DEFAULT_BORDER_COLOR);
         updateDrawableAttrs();
         updateBackgroundDrawableAttrs(false);
         if (borderWidth > 0) {
