@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.zhoumushui.zygotezuimei.util.MyUncaughtExceptionHandler;
 
-
 public class MyApp extends Application {
 
     private Context context;

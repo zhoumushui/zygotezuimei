@@ -13,9 +13,9 @@ import com.handmark.pulltorefresh.library.extras.viewpager.PullToRefreshViewPage
 import com.zhoumushui.zygotezuimei.R;
 import com.zhoumushui.zygotezuimei.bean.Card;
 import com.zhoumushui.zygotezuimei.control.CardPagerAdapter;
-import com.zhoumushui.zygotezuimei.control.IRhythmItemListener;
+import com.zhoumushui.zygotezuimei.control.OnItemSelectListener;
 import com.zhoumushui.zygotezuimei.control.RhythmAdapter;
-import com.zhoumushui.zygotezuimei.control.RhythmLayout;
+import com.zhoumushui.zygotezuimei.view.RhythmLayout;
 import com.zhoumushui.zygotezuimei.util.AnimatorUtils;
 import com.zhoumushui.zygotezuimei.view.ViewPagerScroller;
 
@@ -56,17 +56,16 @@ public class MainActivity extends FragmentActivity {
      */
     private View layoutMain;
 
-    private List<Card> mCardList;
+    private List<Card> listCard;
 
     /**
      * 记录上一个选项卡的颜色值
      */
     private int mPreColor;
 
-
-    private IRhythmItemListener iRhythmItemListener = new IRhythmItemListener() {
+    private OnItemSelectListener onItemSelectListener = new OnItemSelectListener() {
         @Override
-        public void onSelected(final int position) {
+        public void onItemSelected(final int position) {
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     mViewPager.setCurrentItem(position);
@@ -85,12 +84,12 @@ public class MainActivity extends FragmentActivity {
 
                 @Override
                 public void onPageSelected(int position) {
-                    int currColor = mCardList.get(position).getBackgroundColor();
+                    int currColor = listCard.get(position).getBackgroundColor();
                     AnimatorUtils.showBackgroundColorAnimation(layoutMain, mPreColor, currColor,
                             400);
                     mPreColor = currColor;
 
-                    layoutMain.setBackgroundColor(mCardList.get(position).getBackgroundColor());
+                    layoutMain.setBackgroundColor(listCard.get(position).getBackgroundColor());
                     rhythmLayout.showRhythmAtPosition(position);
                 }
 
@@ -104,12 +103,11 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initial();
+        initialLayout();
     }
 
-    private void initial() {
-        //实例化控件
-        layoutMain = findViewById(R.id.layoutMain);
+    private void initialLayout() {
+        layoutMain = findViewById(R.id.layoutMain); //实例化控件
         rhythmLayout = (RhythmLayout) findViewById(R.id.rhythmLayout);
         pullToRefreshViewPager = (PullToRefreshViewPager) findViewById(R.id.pullToRefreshViewPager);
         //获取PullToRefreshViewPager中的ViewPager控件
@@ -122,31 +120,31 @@ public class MainActivity extends FragmentActivity {
         ((RelativeLayout.LayoutParams) this.pullToRefreshViewPager.getLayoutParams()).bottomMargin
                 = height;
 
-        mCardList = new ArrayList<Card>();
+        listCard = new ArrayList<Card>();
         for (int i = 0; i < 30; i++) {
             Card card = new Card();
             card.setBackgroundColor((int) -(Math.random() * (16777216 - 1) + 1)); // 随机生成颜色值
-            mCardList.add(card);
+            listCard.add(card);
         }
-        //设置ViewPager的适配器
-        cardPagerAdapter = new CardPagerAdapter(getSupportFragmentManager(), mCardList);
+        // 设置ViewPager的适配器
+        cardPagerAdapter = new CardPagerAdapter(getSupportFragmentManager(), listCard);
         mViewPager.setAdapter(cardPagerAdapter);
-        //设置钢琴布局的适配器
-        rhythmAdapter = new RhythmAdapter(this, mCardList);
+        // 设置钢琴布局的适配器
+        rhythmAdapter = new RhythmAdapter(this, listCard);
         rhythmLayout.setAdapter(rhythmAdapter);
 
-        //设置ViewPager的滚动速度
+        // 设置ViewPager的滚动速度
         setViewPagerScrollSpeed(this.mViewPager, 400);
 
-        //设置控件的监听
-        rhythmLayout.setRhythmListener(iRhythmItemListener);
+        // 设置控件的监听
+        rhythmLayout.setOnItemSelectListener(onItemSelectListener);
         mViewPager.setOnPageChangeListener(onPageChangeListener);
-        //设置ScrollView滚动动画延迟执行的时间
+        // 设置ScrollView滚动动画延迟执行的时间
         rhythmLayout.setScrollRhythmStartDelayTime(400);
 
-        //初始化时将第一个键帽弹出,并设置背景颜色
+        // 初始化时将第一个键帽弹出,并设置背景颜色
         rhythmLayout.showRhythmAtPosition(0);
-        mPreColor = mCardList.get(0).getBackgroundColor();
+        mPreColor = listCard.get(0).getBackgroundColor();
         layoutMain.setBackgroundColor(mPreColor);
     }
 

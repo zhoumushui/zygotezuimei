@@ -75,15 +75,14 @@ public class RhythmAdapter extends BaseAdapter {
                                 getDimensionPixelSize(R.dimen.rhythm_icon_margin)));
 
         ImageView imageIcon = (ImageView) relativeLayout.findViewById(R.id.image_icon);
-        //计算ImageView的大小
+        // 计算ImageView的大小
         int iconSize = (relativeLayoutWidth -
                 2 * mContext.getResources().getDimensionPixelSize(R.dimen.rhythm_icon_margin));
         ViewGroup.LayoutParams iconParams = imageIcon.getLayoutParams();
         iconParams.width = iconSize;
         iconParams.height = iconSize;
         imageIcon.setLayoutParams(iconParams);
-        //设置背景图片
-        imageIcon.setBackgroundResource(R.drawable.ic_launcher);
+        imageIcon.setBackgroundResource(R.drawable.ic_launcher); //设置背景图片
 
         return relativeLayout;
     }

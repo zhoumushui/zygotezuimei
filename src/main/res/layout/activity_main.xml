@@ -25,7 +25,7 @@
         ptr:ptrMode="both"
         ptr:ptrScrollingWhileRefreshingEnabled="false" />
 
-    <com.zhoumushui.zygotezuimei.control.RhythmLayout
+    <com.zhoumushui.zygotezuimei.view.RhythmLayout
         android:id="@+id/rhythmLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/rhythm_layout_height"
@@ -36,6 +36,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal" />
-    </com.zhoumushui.zygotezuimei.control.RhythmLayout>
+    </com.zhoumushui.zygotezuimei.view.RhythmLayout>
 
 </RelativeLayout>

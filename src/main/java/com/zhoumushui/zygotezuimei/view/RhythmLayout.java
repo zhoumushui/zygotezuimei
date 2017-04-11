@@ -1,4 +1,4 @@
-package com.zhoumushui.zygotezuimei.control;
+package com.zhoumushui.zygotezuimei.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -14,6 +14,8 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.zhoumushui.zygotezuimei.R;
+import com.zhoumushui.zygotezuimei.control.OnItemSelectListener;
+import com.zhoumushui.zygotezuimei.control.RhythmAdapter;
 import com.zhoumushui.zygotezuimei.util.AnimatorUtils;
 
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class RhythmLayout extends HorizontalScrollView {
     /**
      * 适配器
      */
-    private RhythmAdapter mAdapter;
+    private RhythmAdapter rhythmAdapter;
     /**
      * item在Y轴位移的单位，以这个值为基础开始阶梯式位移动画
      */
@@ -62,13 +64,12 @@ public class RhythmLayout extends HorizontalScrollView {
     /**
      * 监听器，监听手指离开屏幕时的位置
      */
-    private IRhythmItemListener mListener;
+    private OnItemSelectListener mListener;
 
     /**
      * 上一次所选中的item的位置
      */
     private int mLastDisplayItemPosition;
-
 
     /**
      * ScrollView滚动动画延迟执行的时间
@@ -89,16 +90,12 @@ public class RhythmLayout extends HorizontalScrollView {
         init();
     }
 
-
     private void init() {
-        //获得屏幕大小
-        DisplayMetrics displayMetrics = new DisplayMetrics();
+        DisplayMetrics displayMetrics = new DisplayMetrics(); // 获得屏幕大小
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         mScreenWidth = displayMetrics.widthPixels;
-        //获取Item的宽度，为屏幕的七分之一
-        mItemWidth = mScreenWidth / 7;
-        //初始化时将手指当前所在的位置置为-1
-        mCurrentItemPosition = -1;
+        mItemWidth = mScreenWidth / 7; // 获取Item的宽度，为屏幕的七分之一
+        mCurrentItemPosition = -1; // 初始化时将手指当前所在的位置置为-1
         mMaxTranslationHeight = (int) mItemWidth;
         mIntervalHeight = (mMaxTranslationHeight / 6);
         mEdgeSizeForShiftRhythm = getResources().getDimensionPixelSize
@@ -112,46 +109,47 @@ public class RhythmLayout extends HorizontalScrollView {
         mScrollStartDelayTime = 0;
     }
 
-    public void setAdapter(RhythmAdapter adapter) {
-        this.mAdapter = adapter;
-        //如果获取HorizontalScrollView下的LinearLayout控件
+    public void setAdapter(RhythmAdapter rhythmAdapter) {
+        this.rhythmAdapter = rhythmAdapter;
+        // 如果获取HorizontalScrollView下的LinearLayout控件
         if (mLinearLayout == null) {
             mLinearLayout = (LinearLayout) getChildAt(0);
         }
-        //循环获取adapter中的View，设置item的宽度并且add到mLinearLayout中
-        for (int i = 0; i < this.mAdapter.getCount(); i++) {
-            mAdapter.setItemWidth(mItemWidth);
-            mLinearLayout.addView(mAdapter.getView(i, null, null));
+        // 循环获取adapter中的View，设置item的宽度并且add到mLinearLayout中
+        for (int i = 0; i < this.rhythmAdapter.getCount(); i++) {
+            rhythmAdapter.setItemWidth(mItemWidth);
+            mLinearLayout.addView(rhythmAdapter.getView(i, null, null));
         }
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
-            case MotionEvent.ACTION_MOVE://移动
+            case MotionEvent.ACTION_MOVE: // 移动
                 mTimer.monitorTouchPosition(ev.getX(), ev.getY());
                 updateItemHeight(ev.getX());
                 break;
-            case MotionEvent.ACTION_DOWN://按下
+
+            case MotionEvent.ACTION_DOWN: // 按下
                 mTimer.monitorTouchPosition(ev.getX(), ev.getY());
-                //得到按下时的时间戳
-                mFingerDownTime = System.currentTimeMillis();
+                mFingerDownTime = System.currentTimeMillis(); // 按下时的时间戳
                 updateItemHeight(ev.getX());
                 break;
-            case MotionEvent.ACTION_UP://抬起
+
+            case MotionEvent.ACTION_UP: // 抬起
                 actionUp();
                 break;
         }
         return true;
     }
 
-    //更新小图标的高度
+    /**
+     * 更新小图标的高度
+     */
     private void updateItemHeight(float scrollX) {
-        //得到屏幕上可见的7个小图标的视图
-        List viewList = getVisibleViews();
-        //当前手指所在的item
-        int position = (int) (scrollX / mItemWidth);
-        //如果手指位置没有发生变化或者大于childCount的则跳出方法不再继续执行
+        List viewList = getVisibleViews(); // 得到屏幕上可见的7个小图标的视图
+        int position = (int) (scrollX / mItemWidth); // 当前手指所在的item
+        // 如果手指位置没有发生变化或者大于childCount的则跳出方法不再继续执行
         if (position == mCurrentItemPosition || position >= mLinearLayout.getChildCount())
             return;
         mCurrentItemPosition = position;
@@ -165,16 +163,14 @@ public class RhythmLayout extends HorizontalScrollView {
         ArrayList arrayList = new ArrayList();
         if (mLinearLayout == null)
             return arrayList;
-        //当前可见的第一个小图标的位置
-        int firstPosition = getFirstVisibleItemPosition();
-        //当前可见的最后一个小图标的位置
-        int lastPosition = firstPosition + 7;
-        if (mLinearLayout.getChildCount() < 7) {
+
+        int firstPosition = getFirstVisibleItemPosition();  // 当前可见的第一个小图标的位置
+        int lastPosition = firstPosition + 7; // 当前可见的最后一个小图标的位置
+        if (mLinearLayout.getChildCount() < 7)
             lastPosition = mLinearLayout.getChildCount();
-        }
-        //取出当前可见的7个小图标
+
         for (int i = firstPosition; i < lastPosition; i++)
-            arrayList.add(mLinearLayout.getChildAt(i));
+            arrayList.add(mLinearLayout.getChildAt(i)); // 取出当前可见的7个小图标
         return arrayList;
     }
 
@@ -211,8 +207,8 @@ public class RhythmLayout extends HorizontalScrollView {
         if (mLinearLayout == null) {
             return 0;
         }
-        //获取小图标的数量
-        int size = mLinearLayout.getChildCount();
+
+        int size = mLinearLayout.getChildCount(); // 获取小图标的数量
         for (int i = 0; i < size; i++) {
             View view = mLinearLayout.getChildAt(i);
             //当出现小图标的x轴比当前ScrollView的x轴大时，这个小图标就是当前可见的第一个
@@ -231,13 +227,10 @@ public class RhythmLayout extends HorizontalScrollView {
         }
         int size = viewList.size();
         for (int i = 0; i < size; i++) {
-            //根据小图标的位置计算出在Y轴需要位移的大小
-
-            int translationY = Math.min(Math.max(Math.abs(fingerPosition - i) * mIntervalHeight, 10), mMaxTranslationHeight);
-            //位移动画
-            updateItemHeightAnimator(viewList.get(i), translationY);
+            int translationY = Math.min(Math.max(Math.abs(fingerPosition - i) * mIntervalHeight,
+                    10), mMaxTranslationHeight); // 根据小图标的位置计算出在Y轴需要位移的大小
+            updateItemHeightAnimator(viewList.get(i), translationY); // 位移动画
         }
-
     }
 
     /**
@@ -263,8 +256,7 @@ public class RhythmLayout extends HorizontalScrollView {
         int lastPosition = firstPosition + mCurrentItemPosition;
         final List viewList = getVisibleViews();
         int size = viewList.size();
-        //将当前小图标从要落下的ViewList中删除
-        if (size > mCurrentItemPosition) {
+        if (size > mCurrentItemPosition) {  // 将当前小图标从要落下的ViewList中删除
             viewList.remove(mCurrentItemPosition);
         }
         if (firstPosition - 1 >= 0) {
@@ -273,7 +265,7 @@ public class RhythmLayout extends HorizontalScrollView {
         if (lastPosition + 1 <= mLinearLayout.getChildCount()) {
             viewList.add(mLinearLayout.getChildAt(lastPosition + 1));
         }
-        //200毫秒后执行动画
+
         this.mHandler.postDelayed(new Runnable() {
             public void run() {
                 for (int i = 0; i < viewList.size(); i++) {
@@ -281,13 +273,13 @@ public class RhythmLayout extends HorizontalScrollView {
                     shootDownItem(downView, true);
                 }
             }
-        }, 200L);
-        //触发监听
+        }, 200L);  // 200毫秒后执行动画
+
         if (mListener != null)
-            mListener.onSelected(lastPosition);
+            mListener.onItemSelected(lastPosition);  // 触发监听
         mCurrentItemPosition = -1;
-        //使设备震动
-        vibrate(20L);
+
+        vibrate(20L); // 震动设备
     }
 
     /**
@@ -465,22 +457,20 @@ public class RhythmLayout extends HorizontalScrollView {
         //item的降下动画
         Animator shootDownAnimator;
 
-        if ((this.mLastDisplayItemPosition < 0) || (mAdapter.getCount() <= 7) || (position <= 3)) {
-            //当前要位移到的位置为前3个时或者总的item数量小于7个
+        if ((this.mLastDisplayItemPosition < 0) || (rhythmAdapter.getCount() <= 7) ||
+                (position <= 3)) { // 当前要位移到的位置为前3个时或者总的item数量小于7个
             scrollAnimator = scrollToPosition(0, mScrollStartDelayTime, false);
-        } else if (mAdapter.getCount() - position <= 3) {
+        } else if (rhythmAdapter.getCount() - position <= 3) {
             //当前要位移到的位置为最后3个
-            scrollAnimator = scrollToPosition(mAdapter.getCount() - 7, mScrollStartDelayTime, false);
+            scrollAnimator = scrollToPosition(rhythmAdapter.getCount() - 7,
+                    mScrollStartDelayTime, false);
         } else {
             //当前位移到的位置既不是前3个也不是后3个
             scrollAnimator = scrollToPosition(position - 3, mScrollStartDelayTime, false);
         }
-        //获取对应item升起动画
-        bounceUpAnimator = bounceUpItem(position, false);
-        //获取对应item降下动画
-        shootDownAnimator = shootDownItem(mLastDisplayItemPosition, false);
-        //动画合集 弹起动画和降下动画的组合
-        AnimatorSet animatorSet1 = new AnimatorSet();
+        bounceUpAnimator = bounceUpItem(position, false); // item升起动画
+        shootDownAnimator = shootDownItem(mLastDisplayItemPosition, false); // item降下动画
+        AnimatorSet animatorSet1 = new AnimatorSet(); //动画合集 弹起动画和降下动画的组合
         if (bounceUpAnimator != null) {
             animatorSet1.playTogether(bounceUpAnimator);
         }
@@ -505,7 +495,7 @@ public class RhythmLayout extends HorizontalScrollView {
     /**
      * 设置监听器
      */
-    public void setRhythmListener(IRhythmItemListener listener) {
+    public void setOnItemSelectListener(OnItemSelectListener listener) {
         mListener = listener;
     }
 
